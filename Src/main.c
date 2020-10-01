@@ -41,6 +41,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include<string.h>
+#include<stdarg.h>
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -53,7 +54,9 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define D_UART &huart2
+#define B_UART &huart1
+#define BL_DEBUG_MSG_EN
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -77,6 +80,9 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_CRC_Init(void);
+void debug(char *str);
+void bootloader(char *str);
+void debugprint(char *format, ...);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -85,13 +91,25 @@ static void MX_CRC_Init(void);
 /* USER CODE BEGIN 0 */
 void debug(char *str)
 {
-	HAL_UART_Transmit(&huart2, (uint8_t*)str, strlen(str), 20000);
+	HAL_UART_Transmit(D_UART, (uint8_t*)str, strlen(str), 20000);
 }
 
 
 void bootloader(char *str)
 {
-	HAL_UART_Transmit(&huart1, (uint8_t*)str, strlen(str), 20000);
+	HAL_UART_Transmit(B_UART, (uint8_t*)str, strlen(str), 20000);
+}
+
+void debugprint(char *format, ...)
+{
+#ifdef BL_DEBUG_MSG_EN
+	char str[1000];
+	/*Extract the arguments list using Va apis */
+	va_list args;
+	va_start(args, format);
+	vsprintf(str, format, args);
+	HAL_UART_Transmit(D_UART, (uint8_t*)str, strlen(str), 20000);
+#endif
 }
 /* USER CODE END 0 */
 
@@ -127,7 +145,8 @@ int main(void)
   MX_USART1_UART_Init();//UART1 peripheral for boot loader Command
   MX_CRC_Init();//CRC we are using to check data correction
   /* USER CODE BEGIN 2 */
-
+  uint8_t date = 19, month = 05;
+  uint16_t year = 1990;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -137,6 +156,7 @@ int main(void)
     /* USER CODE END WHILE */
 	  debug("Hi, This is Bootloader Debug UART\r\n");
 	  bootloader("Hi, This is bootloader UART Testing\r\n");
+	  debugprint("Hi my Dob %d:%d:%d\r\n",date, month, year);
 	  HAL_Delay(5000);
     /* USER CODE BEGIN 3 */
   }
