@@ -136,6 +136,7 @@ int main(void)
   {
     /* USER CODE END WHILE */
 	  debug("Hi, This is Bootloader Debug UART\r\n");
+	  bootloader("Hi, This is bootloader UART Testing\r\n");
 	  HAL_Delay(5000);
     /* USER CODE BEGIN 3 */
   }
