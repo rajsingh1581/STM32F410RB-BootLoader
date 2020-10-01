@@ -40,7 +40,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include<string.h>
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -83,7 +83,16 @@ static void MX_CRC_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void debug(char *str)
+{
+	HAL_UART_Transmit(&huart2, (uint8_t*)str, strlen(str), 20000);
+}
 
+
+void bootloader(char *str)
+{
+	HAL_UART_Transmit(&huart1, (uint8_t*)str, strlen(str), 20000);
+}
 /* USER CODE END 0 */
 
 /**
@@ -113,10 +122,10 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_USART2_UART_Init();
-  MX_USART1_UART_Init();
-  MX_CRC_Init();
+  MX_GPIO_Init();// We are using GPIO peripherals
+  MX_USART2_UART_Init();//UART2 peripheral for Debugging
+  MX_USART1_UART_Init();//UART1 peripheral for boot loader Command
+  MX_CRC_Init();//CRC we are using to check data correction
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -126,7 +135,8 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+	  debug("Hi, This is Bootloader Debug UART\r\n");
+	  HAL_Delay(5000);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
