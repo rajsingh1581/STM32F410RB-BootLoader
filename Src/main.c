@@ -82,7 +82,7 @@ static void MX_USART1_UART_Init(void);
 static void MX_CRC_Init(void);
 void debug(char *str);
 void bootloader(char *str);
-void debugprint(char *format, ...);
+static void debugprint(char *format, ...);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -145,8 +145,8 @@ int main(void)
   MX_USART1_UART_Init();//UART1 peripheral for boot loader Command
   MX_CRC_Init();//CRC we are using to check data correction
   /* USER CODE BEGIN 2 */
-  uint8_t date = 19, month = 05;
-  uint16_t year = 1990;
+
+  debugprint("Bootloader Debug: HELLO! From Bootloader!\r\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -154,10 +154,14 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  debug("Hi, This is Bootloader Debug UART\r\n");
-	  bootloader("Hi, This is bootloader UART Testing\r\n");
-	  debugprint("Hi my Dob %d:%d:%d\r\n",date, month, year);
-	  HAL_Delay(5000);
+
+	  //bootloader("Hi, This is bootloader UART Testing\r\n");
+	  if(HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin) == GPIO_PIN_RESET)
+	  {
+		  debugprint("Button pressed\r\n");
+	  }
+
+	  //HAL_Delay(5000);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
